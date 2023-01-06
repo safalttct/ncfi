@@ -1,0 +1,89 @@
+To emit an event when the next step in an Angular wizard is displayed, you can use the (stepChange) event of the ng-wizard component and a shared service or an @Input()/@Output() pair.
+
+Here's an example of how you can do this using a shared service:
+
+Create a shared service that has a subject that you can next to emit an event.
+Inject the shared service into the wizard component and the step components.
+In the wizard component, use the (stepChange) event to emit the event using the shared service's next method.
+In the step component that listens for the event, subscribe to the subject to listen for emitted events.
+Here's some code that demonstrates this:
+
+service.ts
+
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SharedService {
+
+  private eventEmitter = new Subject<any>();
+
+  emit(event: any) {
+    this.eventEmitter.next(event);
+  }
+
+  get eventObservable() {
+    return this.eventEmitter.asObservable();
+  }
+}
+
+parent.ts
+
+import { Component, OnInit } from '@angular/core';
+import { SharedService } from './shared.service';
+
+@Component({
+  selector: 'app-wizard',
+  template: `
+    <ng-wizard [step]="currentStep" (stepChange)="onStepChange($event)">
+      <ng-wizard-step title="Step 1">
+        <!-- Step 1 content goes here -->
+      </ng-wizard-step>
+      <ng-wizard-step title="Step 2">
+        <!-- Step 2 content goes here -->
+      </ng-wizard-step>
+      <ng-wizard-step title="Step 3">
+        <!-- Step 3 content goes here -->
+      </ng-wizard-step>
+    </ng-wizard>
+  `
+})
+export class WizardComponent implements OnInit {
+  currentStep = 0;
+
+  constructor(private sharedService: SharedService) { }
+
+  ngOnInit() {
+  }
+
+  onStepChange(step: number) {
+    this.currentStep = step;
+    this.sharedService.emit({event: 'step changed'});
+  }
+}
+
+step 2 .ts
+
+import { Component, OnInit } from '@angular/core';
+import { SharedService } from './shared.service';
+
+@Component({
+  selector: 'app-step2',
+  template: `
+    <p>Step 2 component</p>
+  `,
+  styleUrls: ['./step2.component.css']
+})
+export class Step2Component implements OnInit {
+
+  constructor(private sharedService: SharedService) { }
+
+  ngOnInit() {
+    this.sharedService.eventObservable.subscribe(event => {
+      console.log(event); // log the emitted event
+    });
+  }
+
+}

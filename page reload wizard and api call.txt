@@ -1,0 +1,65 @@
+To make the ng-wizard component stay on the current step when the page is reloaded in Angular, and to call an API when the page is reloaded in the current step component, you can use the sessionStorage API to store the current step and the ngOnInit lifecycle hook to call the API.
+
+Here's an example of how you can do this:
+
+// <!-- parent wizard -->
+
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-wizard',
+  template: `
+    <ng-wizard [step]="currentStep" (stepChange)="onStepChange($event)">
+      <ng-wizard-step title="Step 1">
+        <!-- Step 1 content goes here -->
+      </ng-wizard-step>
+      <ng-wizard-step title="Step 2">
+        <app-step2></app-step2>
+      </ng-wizard-step>
+      <ng-wizard-step title="Step 3">
+        <!-- Step 3 content goes here -->
+      </ng-wizard-step>
+    </ng-wizard>
+  `
+})
+export class WizardComponent implements OnInit {
+  currentStep: number;
+
+  constructor() { }
+
+  ngOnInit() {
+    this.currentStep = sessionStorage.getItem('currentStep') || 0;
+  }
+
+  onStepChange(step: number) {
+    sessionStorage.setItem('currentStep', step);
+  }
+
+}
+
+// <!-- Step 2 component -->
+
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-step2',
+  template: `
+    <p>Step 2 component</p>
+  `,
+  styleUrls: ['./step2.component.css']
+})
+export class Step2Component implements OnInit {
+
+  constructor(private http: HttpClient) { }
+
+  ngOnInit() {
+    this.http.get('/api/items').subscribe(items => {
+      // Do something with the items
+    });
+  }
+
+}
+
+This will store the current step in sessionStorage when the step changes, retrieve it when the page is reloaded, and call the API when the current step component is loaded. The ng-wizard component will then stay on the current step.

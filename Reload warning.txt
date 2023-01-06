@@ -1,0 +1,13 @@
+  // signupForm dirty pageload warning 
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any) {
+    if (this.signupForm.dirty) {
+      $event.returnValue = true;
+    }
+  }
+
+This will display a warning to the user when they try to leave the page, asking them to confirm that they want to leave the page and potentially lose their data.
+
+Keep in mind that this behavior may be ignored by some browsers, as it is not a standardized behavior.
+
+You can also use the CanDeactivate guard to prevent the user from leaving the page until they have saved their changes or explicitly indicated that they want to discard them.  
