@@ -1,0 +1,73 @@
+<table>
+  <tr *ngFor="let item1 of array1; let i = index">
+    <td>
+      <input type="checkbox" [checked]="array1[i].id === array2[i].id" [(ngModel)]="array1[i].isChecked"
+        (ngModelChange)="onChange(i, array1[i].id)">
+    </td>
+    <td>{{ item1.name }}</td>
+    <td>{{ item1.id }}</td>
+    <td>{{ item1.otherProperty }}</td>
+  </tr>
+</table>
+
+In this example, array1 and array2 are the two arrays containing objects. The checkbox [checked] binding is bound to an
+expression that compares the current object of array1 id property (array1[i].id) with the corresponding object id
+property in array2 (array2[i].id) using the equality operator (===).
+[(ngModel)] binding is used to two way bind the checkbox value with array1[i].isChecked and (ngModelChange) event is
+used to listen to the checkbox change and update the array accordingly with function onChange(i, array1[i].id)
+
+Also make sure to adjust the property names and the names of the arrays accordingly to the structure of your data, also
+you may have to add styles to the table to make it look appropriate for your use case.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------->
+
+<tr *ngFor="let item1 of array1">
+  <td>
+    <input type="checkbox" [checked]="array2.find(item2 => item2.id === item1.id)" disabled
+      *ngIf="array2.find(item2 => item2.id === item1.id)" />
+  </td>
+</tr>
+
+This way, the checkbox will be checked if the array2.find(item2 => item2.id === item1.id) expression returns a truthy
+value, which would be the element with the matching id , otherwise, if the find() method returns undefined it would be
+falsy, the checkbox will not be rendered in the DOM.
+
+Note that you could also use the *ngIf directive alone to conditionally render the checkbox,
+
+<tr *ngFor="let item1 of array1">
+  <td>
+    <input type="checkbox" [checked]="array2.find(item2 => item2.id === item1.id)" disabled
+      *ngIf="array2.find(item2 => item2.id === item1.id)" />
+  </td>
+</tr>
+
+It will check each item1 from array1 and check if it's id exists in array2 and if it does, it will render the checkbox,
+if not the checkbox will not be rendered.
+
+--------------------------------------------------------------------------------------------------------------------------->
+
+<tr *ngFor="let item1 of array1">
+  <td>
+    <input type="checkbox" [checked]="array2.find(item2 => item2.id === item1.id) ? true : false" disabled
+      *ngIf="array2.find(item2 => item2.id === item1.id)" />
+  </td>
+</tr>
+
+This way, for each item1 in the array1 the template will check if there's a corresponding object in the array2 that has
+the same id as item1 using array2.find(item2 => item2.id === item1.id) which returns the element if exists, otherwise
+undefined. Then it will set the [checked] attribute of the checkbox to "true" if the element exists, and "false"
+otherwise, if the element does not exists checkbox will not be rendered.
+
+Alternatively, you could move this logic to your component ts file like this
+
+isChecked(item: any) {
+return array2.find(item2 => item2.id === item.id) != undefined;
+}
+
+and use it as a function, in your template you could use this function as follows:
+
+<tr *ngFor="let item of array1">
+  <td><input type="checkbox" [checked]="isChecked(item)" disabled /></td>
+</tr>
