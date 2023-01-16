@@ -1,0 +1,76 @@
+In Angular, you can bind a click event to a delete button within each table row, and use the splice() method to delete
+the corresponding object from the array.
+
+Here's an example:
+
+<table>
+    <tr *ngFor="let item of myArray; let i = index">
+        <td>{{item.name}}</td>
+        <td><button (click)="deleteRow(i)">Delete</button></td>
+    </tr>
+</table>
+
+In this example, the ngFor directive is used to loop through the myArray and create a table row for each object. The i
+variable is used as the index for each object in the array, which is passed to the deleteRow() function when the delete
+button is clicked.
+
+In your component:
+
+deleteRow(index: number) {
+this.myArray.splice(index, 1);
+}
+
+This function takes the index of the row as an argument, and uses the splice() method to remove the object at that index
+from the array. This will update the table and delete the specific row from the table.
+
+You can also pass the object itself to the function and use the same approach of JSON.stringify to find the index of the
+object to delete
+
+<table>
+    <tr *ngFor="let item of myArray">
+        <td>{{item.name}}</td>
+        <td><button (click)="deleteRow(item)">Delete</button></td>
+    </tr>
+</table>
+
+deleteRow(objectToDelete: any) {
+let indexToDelete = this.myArray.findIndex(x => JSON.stringify(x) === JSON.stringify(objectToDelete));
+this.myArray.splice(indexToDelete, 1);
+}
+
+<!-- another  -->
+
+In Angular, you can bind a click event to a delete button within each table row, and use the splice() method to delete
+the corresponding object from the array. Here's an example using the approach of passing the object itself to the
+function:
+
+<table>
+    <tr *ngFor="let item of myArray">
+        <td>{{item.name}}</td>
+        <td><button (click)="deleteRow(item)">Delete</button></td>
+    </tr>
+</table>
+
+In this example, the ngFor directive is used to loop through the myArray and create a table row for each object. When
+the delete button is clicked, it will call the deleteRow() function and pass the corresponding object as an argument.
+
+In your component:
+
+deleteRow(objectToDelete: any) {
+let indexToDelete = this.myArray.findIndex(x => x === objectToDelete);
+this.myArray.splice(indexToDelete, 1);
+}
+
+<!-- using id  -->
+
+This function takes the object of the row as an argument, and uses the findIndex() method to find the index of the
+object to delete in the array. Then, it uses the splice() method to remove the object at that index from the array. This
+will update the table and delete the specific row from the table.
+
+Another approach is to use a property of the object as an identifier like id for example, then you can use findIndex to
+find the index of the object to delete based on the identifier.
+
+deleteRow(objectToDelete: any) {
+let indexToDelete = this.myArray.findIndex(x => x.id === objectToDelete.id);
+this.myArray.splice(indexToDelete, 1);
+}
