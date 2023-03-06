@@ -1,0 +1,37 @@
+To get the selected object from an Angular dropdown select dropdown and log it to the console, you can use the (ngModelChange)
+event to capture the selected value and then use console.log() to print the selected object to the console.
+
+Here's an example:
+
+In your HTML template, create a select dropdown using the ngModel directive to bind the selected value to a variable in your component:
+
+Copy code
+<select [(ngModel)]="selectedItem" (ngModelChange)="onItemSelected()">
+  <option *ngFor="let item of items" [value]="item">{{ item.name }}</option>
+</select>
+In this example, items is an array of objects that you want to display in the dropdown. Each object has a name property that will be used as the label for the option.
+
+In your component, define the selectedItem variable to store the selected object, and define a function onItemSelected() to log the selected object to the console:
+typescript
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-my-component',
+  templateUrl: './my-component.component.html',
+  styleUrls: ['./my-component.component.css']
+})
+export class MyComponent {
+  selectedItem: any;
+  items = [
+    { id: 1, name: 'Item 1' },
+    { id: 2, name: 'Item 2' },
+    { id: 3, name: 'Item 3' }
+  ];
+
+  onItemSelected() {
+    console.log(this.selectedItem);
+  }
+}
+In this example, items is an array of objects with id and name properties. When the user selects an option, 
+the selectedItem variable will be set to the selected object, and the onItemSelected() function will log the selected object to the console using console.log().
